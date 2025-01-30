@@ -1,0 +1,115 @@
+{%- assign collection = collections[section.settings.collection] -%}
+{%- assign product_limit = section.settings.product_limit -%}
+
+<div class="featured-collection">
+  <h2 class="featured-collection__title">{{ section.settings.title }}</h2>
+  <div class="featured-collection__grid">
+    {% for product in collection.products limit: product_limit %}
+      <div class="featured-collection__product">
+        <a href="{{ product.url }}" class="featured-collection__product-link">
+          <img src="{{ product.featured_image | img_url: '300x300' }}" alt="{{ product.title }}" class="featured-collection__product-image">
+          <h3 class="featured-collection__product-title">{{ product.title }}</h3>
+          <p class="featured-collection__product-price">{{ product.price | money }}</p>
+        </a>
+        {% if product.available %}
+          <form action="/cart/add" method="post">
+            <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+            <button type="submit" class="featured-collection__add-to-cart">Add to Cart</button>
+          </form>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Featured Collection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select Collection"
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Number of Products to Display",
+      "min": 2,
+      "max": 6,
+      "step": 2,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .featured-collection {
+    text-align: center;
+    padding: 20px;
+  }
+
+  .featured-collection__title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .featured-collection__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .featured-collection__product {
+    border: 1px solid #e1e1e1;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .featured-collection__product-image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .featured-collection__product-title {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+
+  .featured-collection__product-price {
+    font-size: 16px;
+    color: #333;
+  }
+
+  .featured-collection__add-to-cart {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  .featured-collection__add-to-cart:hover {
+    background-color: #333;
+  }
+
+  @media (max-width: 768px) {
+    .featured-collection__grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+  }
+</style>
